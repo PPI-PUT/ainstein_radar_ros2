@@ -16,6 +16,16 @@ cmake_minimum_required(VERSION 3.5)
 
 project(ainstein_radar_ros2)
 
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+
 # require that dependencies from package.xml be available
 find_package(ament_cmake_auto REQUIRED)
 
@@ -24,39 +34,39 @@ ament_auto_find_build_dependencies(REQUIRED
   ${${PROJECT_NAME}_BUILDTOOL_DEPENDS}
 )
 
-set(AINSTEIN_RADAR_ROS2_LIB_SRC
-  src/ainstein_radar_driver.cpp
-)
-
-set(AINSTEIN_RADAR_ROS2_LIB_HEADERS
-  include/ainstein_radar_ros2/ainstein_radar_driver.hpp
-  include/ainstein_radar_ros2/visibility_control.hpp
-)
-
 # generate library
 ament_auto_add_library(${PROJECT_NAME} SHARED
-  ${AINSTEIN_RADAR_ROS2_LIB_SRC}
-  ${AINSTEIN_RADAR_ROS2_LIB_HEADERS}
-)
-
-set(AINSTEIN_RADAR_ROS2_NODE_SRC
-  src/ainstein_radar_driver_node.cpp
-)
-
-set(AINSTEIN_RADAR_ROS2_NODE_HEADERS
-  include/ainstein_radar_ros2/ainstein_radar_driver_node.hpp
+    src/ainstein_radar_K-77.cpp
+    src/ainstein_radar_T-79.cpp
 )
 
 # generate component node library
-ament_auto_add_library(${PROJECT_NAME}_node SHARED
-  ${AINSTEIN_RADAR_ROS2_NODE_SRC}
-  ${AINSTEIN_RADAR_ROS2_NODE_HEADERS}
+ament_auto_add_library(ainstein_radar_ros2_T-79_node SHARED
+    src/ainstein_radar_node_T-79.cpp
 )
 
-rclcpp_components_register_node(${PROJECT_NAME}_node
-  PLUGIN "ainstein_radar::AinsteinRadarDriverNode"
-  EXECUTABLE ${PROJECT_NAME}_exe
+target_link_libraries(ainstein_radar_ros2_T-79_node
+  ${PROJECT_NAME}
 )
+
+rclcpp_components_register_node(ainstein_radar_ros2_T-79_node
+  PLUGIN "ainstein_radar::AinsteinRadarNodeT79"
+  EXECUTABLE ainstein_radar_ros2_T-79_node_exe
+)
+
+# generate component node library
+ament_auto_add_library(ainstein_radar_ros2_K-77_node SHARED
+    src/ainstein_radar_node_K-77.cpp
+    )
+
+target_link_libraries(ainstein_radar_ros2_K-77_node
+    ${PROJECT_NAME}
+    )
+
+rclcpp_components_register_node(ainstein_radar_ros2_K-77_node
+    PLUGIN "ainstein_radar::AinsteinRadarNodeK77"
+    EXECUTABLE ainstein_radar_ros2_K-77_node_exe
+    )
 
 # Testing
 if(BUILD_TESTING)

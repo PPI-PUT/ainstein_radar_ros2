@@ -1,0 +1,20 @@
+/**:
+  ros__parameters:
+    # Can send and receive topics are defined by ros2_socketcan package, don't modify them if there is no need.
+    can_send_topic: "to_can_bus"
+    can_receive_topic: "from_can_bus"
+    radar_send_raw_topic: "radar/raw_points_T79"
+    radar_send_tracked_topic: "radar/tracked_points_T79"
+    # T79 radar can process raw and tracked points at the same time.
+    send_raw: True
+    send_tracked: True
+    # Radar id parameter is modifiable, see datasheet for more information. Default value is 0.
+    radar_id: 0
+    frame_id: "radar"
+    # range values should be between <0.5 , 80.0>
+    range_min: 0.5
+    range_max: 2.0
+    # azimuth min value should be between <0 , 60>
+    azimuth_min: 5.0
+    # azimuth max value should be between <0 , 60>
+    azimuth_max: 5.0
