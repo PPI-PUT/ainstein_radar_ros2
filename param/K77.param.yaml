@@ -1,0 +1,13 @@
+/**:
+  ros__parameters:
+    # Can send and receive topics are defined by ros2_socketcan package, don't modify them if there is no need.
+    can_send_topic: "to_can_bus"
+    can_receive_topic: "from_can_bus"
+    radar_send_raw_topic: "radar/radar_raw_K77"
+    radar_send_tracked_topic: "radar/radar_tracked_K77"
+    # K77 radar cannot process raw and tracked points at the same time, only one option can be set to true at a time.
+    send_raw: False
+    send_tracked: True
+    # Antenna type selection. Long antenna - true, short antenna - false.
+    antenna_type: True
+    frame_id: "radar"
