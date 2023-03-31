@@ -21,39 +21,41 @@
 namespace ainstein_radar
 {
 
-    using AinsteinRadarDriverK77Ptr = std::unique_ptr<ainstein_radar::AinsteinRadarDriverK77>;
+using AinsteinRadarDriverK77Ptr = std::unique_ptr<ainstein_radar::AinsteinRadarDriverK77>;
 
-    /// \class AinsteinRadarRos2Node
-    /// \brief ROS 2 Node.
-    class AINSTEIN_RADAR_ROS2_PUBLIC AinsteinRadarNodeK77 : public rclcpp::Node
-    {
-    public:
-      /// \brief default constructor, starts driver
-      /// \throw runtime error if failed to start threads or configure driver
-      explicit AinsteinRadarNodeK77(const rclcpp::NodeOptions & options);
+/// \class AinsteinRadarRos2Node
+/// \brief ROS 2 Node.
+class AINSTEIN_RADAR_ROS2_PUBLIC AinsteinRadarNodeK77 : public rclcpp::Node
+{
+public:
+  /// \brief default constructor, starts driver
+  /// \throw runtime error if failed to start threads or configure driver
+  explicit AinsteinRadarNodeK77(const rclcpp::NodeOptions & options);
 
-      ~AinsteinRadarNodeK77();
+  ~AinsteinRadarNodeK77();
 
-        AinsteinRadarDriverK77Ptr m_ainstein_radar{nullptr};
-    private:
-      rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr m_can_publisher;
-      rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr m_can_subscriber;
-      rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr m_radar_raw_publisher;
-      rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr m_radar_tracked_publisher;
+  AinsteinRadarDriverK77Ptr m_ainstein_radar{nullptr};
 
-      void topic_callback(const can_msgs::msg::Frame::SharedPtr& msg) const;
-      void create_publishers(const std::string& can_send_topic, const std::string& can_recive_topic,
-                             const std::string& radar_send_raw_topic, const std::string& radar_send_tracked_topic);
+private:
+  rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr m_can_publisher;
+  rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr m_can_subscriber;
+  rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr m_radar_raw_publisher;
+  rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr m_radar_tracked_publisher;
 
-      std::string can_send_topic;
-      std::string can_receive_topic;
-      std::string radar_send_raw_topic;
-      std::string radar_send_tracked_topic;
-      bool send_raw;
-      bool send_tracked;
-      bool antenna_type;
-      std::string frame_id;
-    };
+  void topic_callback(const can_msgs::msg::Frame::SharedPtr & msg) const;
+  void create_publishers(
+    const std::string & can_send_topic, const std::string & can_recive_topic,
+    const std::string & radar_send_raw_topic, const std::string & radar_send_tracked_topic);
+
+  std::string can_send_topic;
+  std::string can_receive_topic;
+  std::string radar_send_raw_topic;
+  std::string radar_send_tracked_topic;
+  bool send_raw;
+  bool send_tracked;
+  bool antenna_type;
+  std::string frame_id;
+};
 }  // namespace ainstein_radar
 
 #endif  // AINSTEIN_RADAR_ROS2__AINSTEIN_RADAR_ROS2_NODE_HPP_

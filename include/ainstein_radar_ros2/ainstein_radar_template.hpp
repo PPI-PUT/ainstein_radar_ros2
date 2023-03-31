@@ -24,47 +24,49 @@
 
 namespace ainstein_radar
 {
-    class AINSTEIN_RADAR_ROS2_PUBLIC AinsteinRadarDriver
-    {
-    public:
+class AINSTEIN_RADAR_ROS2_PUBLIC AinsteinRadarDriver
+{
+public:
+  virtual ~AinsteinRadarDriver() = default;
 
-        virtual ~AinsteinRadarDriver( )= default;
+  // Radar requests
+  virtual void startRadar(
+    const rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr & publisher,
+    const rclcpp::Time & time, const rclcpp::Logger & logger) = 0;
+  virtual void stopRadar(
+    const rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr & publisher,
+    const rclcpp::Time & time) = 0;
+  virtual void updateRadarFOV(
+    const rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr & publisher,
+    const rclcpp::Time & time) = 0;
 
-        // Radar requests
-        virtual void startRadar(const rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr& publisher,
-                        const rclcpp::Time& time, const rclcpp::Logger& logger) = 0;
-        virtual void stopRadar(const rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr& publisher,
-                       const rclcpp::Time& time) = 0;
-        virtual void updateRadarFOV(const rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr& publisher,
-                       const rclcpp::Time& time) = 0;
+  // Radar callback
+  virtual void msgCallback(
+    const can_msgs::msg::Frame::SharedPtr & msg,
+    const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr & publisher_raw,
+    const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr & publisher_tracked,
+    const rclcpp::Time & time,
+    const rclcpp::Logger & logger) = 0;
 
-        // Radar callback
-        virtual void msgCallback(const can_msgs::msg::Frame::SharedPtr &msg,
-                         const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr& publisher_raw,
-                         const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr& publisher_tracked,
-                         const rclcpp::Time &time,
-                         const rclcpp::Logger& logger) = 0;
+  //  Process functions
+  virtual void processRadarReturn(const uint8_t & command, const rclcpp::Logger & logger) const = 0;
+  virtual void processRadarStart(const rclcpp::Time & time, const rclcpp::Logger & logger) = 0;
+  virtual void processRadarStop(
+    const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr & publisher_raw,
+    const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr & publisher_tracked,
+    const rclcpp::Logger & logger) = 0;
+  virtual radar_msgs::msg::RadarReturn::UniquePtr processRadarOutput(
+    const can_msgs::msg::Frame::SharedPtr & msg) = 0;
 
-        //  Process functions
-        virtual void processRadarReturn(const uint8_t& command, const rclcpp::Logger& logger) const = 0;
-        virtual void processRadarStart(const rclcpp::Time& time, const rclcpp::Logger& logger) = 0;
-        virtual void processRadarStop(const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr& publisher_raw,
-                              const rclcpp::Publisher<radar_msgs::msg::RadarScan>::SharedPtr& publisher_tracked,
-                              const rclcpp::Logger& logger) = 0;
-        virtual radar_msgs::msg::RadarReturn::UniquePtr processRadarOutput(const can_msgs::msg::Frame::SharedPtr &msg) = 0;
+protected:
+  can_msgs::msg::Frame m_can_frame_msg;
+  radar_msgs::msg::RadarScan m_radar_raw_data;
+  radar_msgs::msg::RadarScan m_radar_tracked_data;
+  bool m_sendRaw = false;
+  bool m_sendTracked = false;
+  std::string m_frameId;
 
-
-    protected:
-
-        can_msgs::msg::Frame m_can_frame_msg;
-        radar_msgs::msg::RadarScan m_radar_raw_data;
-        radar_msgs::msg::RadarScan m_radar_tracked_data;
-        bool m_sendRaw = false;
-        bool m_sendTracked = false;
-        std::string m_frameId;
-
-    };
-
+};
 
 
 }  // namespace ainstein_radar
