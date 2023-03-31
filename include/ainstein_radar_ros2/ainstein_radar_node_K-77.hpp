@@ -44,6 +44,15 @@ namespace ainstein_radar
       void topic_callback(const can_msgs::msg::Frame::SharedPtr& msg) const;
       void create_publishers(const std::string& can_send_topic, const std::string& can_recive_topic,
                              const std::string& radar_send_raw_topic, const std::string& radar_send_tracked_topic);
+
+      std::string can_send_topic;
+      std::string can_receive_topic;
+      std::string radar_send_raw_topic;
+      std::string radar_send_tracked_topic;
+      bool send_raw;
+      bool send_tracked;
+      bool antenna_type;
+      std::string frame_id;
     };
 }  // namespace ainstein_radar
 
